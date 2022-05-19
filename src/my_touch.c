@@ -127,32 +127,6 @@ int print_header(int fd, char *path, int type, char **arg)
     return (0);
 }
 
-int create_file(char *path, int type, char **arg, int replace)
-{
-    int file;
-    char *file_name = build_file_name(path, type);
-    char *type_equal[] = {".c", ".h", "Makefile", "Python", ".sh", ".cpp", ".hpp"};
-
-    file = open(file_name, O_CREAT | O_RDWR | replace, 0664);
-    if (file == -1) {
-        free(file_name);
-        return (-1);
-    }
-    printf(GRN "Create file : %s" NC, path);
-    if (type != NOTYPE)
-        printf(YEL "\ttype : %s\n" NC, type_equal[type]);
-    else
-        printf("\n");
-    if (type != NOTYPE && print_header(file, file_name, type, arg) != 0) {
-        free(file_name);
-        close(file);
-        return (error_message("Error : Header fail\n"));
-    }
-    free(file_name);
-    close(file);
-    return (0);
-}
-
 int main(int ac, char **av)
 {
     int replace = replace_mod(av);

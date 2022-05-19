@@ -32,6 +32,9 @@ char *build_hpp_link(char **arg);
 char *build_path(char *file, char *ext);
 char *build_file_name(char *path, int type);
 
+//create_file.c
+int create_file(char *path, int type, char **arg, int replace);
+
 //file_engine.c
 int file_engine(char *av, int replace);
 

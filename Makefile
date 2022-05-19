@@ -7,14 +7,16 @@
 
 NAME = my_touch
 
-SRC = 	src/build.c				\
-		src/file_engine.c		\
-		src/formater.c			\
-		src/makefile_builder.c	\
-		src/my_touch.c			\
-		src/parser.c			\
-		src/project_name.c		\
-		src/utils.c				\
+SRC = 	src/build.c						\
+		src/create_file.c				\
+		src/file_engine.c				\
+		src/formater.c					\
+		src/my_touch.c					\
+		src/parser.c					\
+		src/project_name.c				\
+		src/utils.c						\
+		src/makefile/makefile_builder.c	\
+		src/makefile/dir.c				\
 
 OBJ = 	$(SRC:.c=.o)
 
