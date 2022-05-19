@@ -8,6 +8,7 @@
 #ifndef MY_TOUCH_H
     #define MY_TOUCH_H
 
+#include <dirent.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -15,6 +16,7 @@
 #include <string.h>
 #include <fcntl.h>
 #include <sys/wait.h>
+#include <sys/stat.h>
 #include <signal.h>
 #include "color.h"
 
@@ -26,6 +28,9 @@
 #define SH 4
 #define CPP 5
 #define HPP 6
+#define ONLY_DIR 1
+#define ONLY_FILE 2
+#define ALL 3
 
 //build.c
 char *build_hpp_link(char **arg);
@@ -42,7 +47,14 @@ int file_engine(char *av, int replace);
 char *define_formateur(char *define);
 char *cpp_formater(char *path);
 
+
+//Makefile
+//dir.c
+char **get_dir_list(char *path, int search);
+int dir_len(char *path, int search);
+
 //makefile_builder.c
+int makefile_builder();
 
 //my_touch.c
 void make_python(int fd);
@@ -72,5 +84,7 @@ int arg_conatain(char **arg, char *src);
 int display_help(void);
 int is_letter(char c);
 int error_message(char *msg);
+void display_list(char **av);
+void free_array(char **av);
 
 #endif //MY_TOUCH_H

@@ -7,6 +7,18 @@
 
 #include "my_touch.h"
 
+void display_list(char **av)
+{
+    int i = 0;
+
+    if (av == NULL)
+        printf(RED"List : NULL\n"NC);
+    for (; av && av[i]; i++)
+        printf(YEL"av[%i]:" CYN" %s\n" NC, i, av[i]);
+    if (av && av[i] == NULL)
+        printf(YEL"av[%i]:" RED" NULL\n" NC, i);
+}
+
 int replace_mod(char **av)
 {
     for (int i = 0; av[i]; i++)
@@ -59,4 +71,12 @@ int error_message(char *msg)
 {
     dprintf(2, RED "%s" NC, msg);
     return (84);
+}
+
+void free_array(char **av)
+{
+    for (int i= 0; av && av[i]; i++)
+        free(av[i]);
+    if (av)
+        free(av);
 }
