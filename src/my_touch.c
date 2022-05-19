@@ -9,9 +9,9 @@ void make_python(int fd)
     dprintf(fd, "    exit(0)\n");
 }
 
-void make_makefile(int fd, int an)
+void make_makefile(char *makefile, int fd, int an)
 {
-    makefile_builder();
+    makefile_builder(makefile, fd, an);
 //    dprintf(fd, "##\n");
 //    dprintf(fd, "## EPITECH PROJECT, %i\n", an);
 //    dprintf(fd, "## MAKEFILE\n");
@@ -114,7 +114,7 @@ int print_header(int fd, char *path, int type, char **arg)
     }
 
     if (type == MAKEFILE)
-        make_makefile(fd, an);
+        make_makefile(path, fd, an);
     if (type == PYTHON)
         make_python(fd);
     if (type == SH)

@@ -7,6 +7,24 @@
 
 #include "my_touch.h"
 
+int array_size(char **av)
+{
+    int len = 0;
+
+    for (; av && av[len]; len++);
+    return (len);
+}
+
+int is_banned_dir(char *path)
+{
+    if (strcmp(path, ".") == 0 || strcmp(path, "..") == 0)
+        return (-1);
+    if (strcmp(path, ".idea") == 0 || strcmp(path, ".git") == 0
+        || strcmp(path, "cmake-build-debug") == 0)
+        return (-1);
+    return (0);
+}
+
 void display_list(char **av)
 {
     int i = 0;
@@ -32,9 +50,8 @@ int find_type(char *path)
     int i = 0;
     char *type[] = {".c", ".h", "Makefile", ".py", ".sh", ".cpp", ".hpp", NULL};
 
-    if (strcmp(path, "Makefile") == 0)
+    if (strncmp(path, "Makefile", strlen("Makefile")) == 0)
         return (2);
-
     for (; path[i] != '\0' && path[i] != '.'; i++);
     if (path[i] != '.')
         return (-1);
