@@ -5,7 +5,7 @@
 ## Makefile
 ##
 
-NAME = MyTouch
+NAME = my_touch
 
 SRC =	src/create_file.c	\
      	src/project_name.c	\
@@ -26,6 +26,8 @@ all:	$(NAME)
 
 $(NAME) : $(OBJ)
 	gcc -o $(NAME) $(OBJ) $(CFLAGS)
+	rm ../my_touch
+	cp my_touch ../
 
 clean:
 	rm -f $(OBJ)

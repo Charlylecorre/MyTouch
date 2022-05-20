@@ -7,6 +7,75 @@
 
 #include "my_touch.h"
 
+char *only_dir(char *list)
+{
+    int len = strlen(list);
+    char *dir = NULL;
+
+    for (; len > 0 && list[len - 1] != '/'; len--);
+    dir = malloc(sizeof (char) * (len + 1));
+    if (dir == NULL)
+        return (NULL);
+    for (int i = 0; i < len; i++) {
+        dir[i] = list[i];
+        dir[i + 1] = '\0';
+    }
+    return (dir);
+}
+
+int count_dir_var(char **list)
+{
+    int size = 0;
+
+    for (int i = 0; list && list[i]; i++) {
+        if (strcmp(list[i], "") != 0)
+            size++;
+    }
+    return (size);
+}
+
+char **remove_doublon(char **list)
+{
+    int size = 0;
+    char **new_list = NULL;
+    int index = 0;
+
+    for (int i = 0; list && list[i]; i++) {
+        for (int j = i; list && list[j]; j++) {
+            if (j != i && strcmp(list[i], list[j]) == 0) {
+                free(list[j]);
+                list[j] = strdup("");
+            }
+        }
+    }
+    size = count_dir_var(list);
+    new_list = malloc(sizeof (char *) * (size + 1));
+    if (new_list == NULL)
+        return (NULL);
+    for (int i = 0; list && list[i]; i++) {
+        if (strcmp(list[i], "") != 0) {
+            new_list[index++] = strdup(list[i]);
+        }
+    }
+    new_list[index] = NULL;
+    free_array(list);
+    return (new_list);
+}
+
+char **dir_filter(char **list)
+{
+    int size = array_size(list);
+    char **filter = malloc(sizeof (char *) * (size + 1));
+
+    if (filter == NULL)
+        return (NULL);
+    for (int i = 0; list && list[i]; i++) {
+        filter[i] = only_dir(list[i]);
+    }
+    free_array(list);
+    return (filter);
+}
+
 char **ext_filter(char **list, int type)
 {
     int final_len = 0;
@@ -83,7 +152,7 @@ char *type_to_str(int type)
     return (NULL);
 }
 
-int print_makefile(char *name, int fd, int an, char **src, int type)
+int print_makefile(char *name, int fd, int an, char **src, char **hpp, int type)
 {
     char *str_type = type_to_str(type);
 
@@ -109,13 +178,22 @@ int print_makefile(char *name, int fd, int an, char **src, int type)
     dprintf(fd, "\n");
 
     dprintf(fd, "OBJ = 	$(SRC:.%s=.o)\n\n", str_type);
-    dprintf(fd, "CFLAGS = -I include -W -Wall -Wextra\n\n");
+    if (type == C)
+        dprintf(fd, "CFLAGS = -I include -W -Wall -Wextra\n\n");
+    if (type == CPP) {
+        dprintf(fd, "CXXFLAGS += ");
+        for (int i = 0; hpp && hpp[i]; i++) {
+            dprintf(fd, "-I %s ", hpp[i]);
+        }
+        dprintf(fd, "-std=c++20 -W -Wall -Wextra\n\n");
+    }
+    dprintf(fd, "LIBS =	\n\n");
     dprintf(fd, "all:	$(NAME)\n\n");
     dprintf(fd, "$(NAME) : $(OBJ)\n");
     if (type == C)
-        dprintf(fd, "	gcc -o $(NAME) $(OBJ) $(CFLAGS)\n\n");
+        dprintf(fd, "	gcc -o $(NAME) $(OBJ) $(CFLAGS) $(LIBS)\n\n");
     if (type == CPP)
-        dprintf(fd, "	g++ -o $(NAME) $(OBJ) $(CFLAGS)\n\n");
+        dprintf(fd, "	g++ -o $(NAME) $(OBJ) $(LIBS)\n\n");
     dprintf(fd, "clean:\n");
     dprintf(fd, "	rm -f $(OBJ)\n");
     dprintf(fd, "	rm -f *~\n");
@@ -137,13 +215,16 @@ int makefile_builder(int fd, int an, char **ext)
     int type = find_makefile_type(ext);
     char *project_name = find_makefile_project_name();
     char **file_list = recup_file_in_dir(".", type);
+    char **hpp_list = recup_file_in_dir(".", HPP);
 
-    if (project_name == NULL || file_list == NULL)
+    if (project_name == NULL || file_list == NULL || hpp_list == NULL)
         return (error_message("Error: Allocation failed!\n"));
-
-    print_makefile(project_name, fd, an, file_list, type);
-
+    if ((hpp_list = dir_filter(hpp_list)) == NULL || (hpp_list = remove_doublon(hpp_list)) == NULL)
+        return (error_message("Error: Allocation failed!\n"));
+    print_makefile(project_name, fd, an, file_list, hpp_list, type);
+    printf(RED"⚠️ " RED" Libs are not generate by the AutoMakefile generator!\n"NC);
     free(project_name);
+    free_array(hpp_list);
     free_array(file_list);
     return (0);
 }
