@@ -7,16 +7,16 @@
 
 NAME = my_touch
 
-SRC = 	src/build.c						\
-		src/create_file.c				\
-		src/file_engine.c				\
-		src/formater.c					\
-		src/my_touch.c					\
-		src/parser.c					\
-		src/project_name.c				\
-		src/utils.c						\
-		src/makefile/makefile_builder.c	\
-		src/makefile/dir.c				\
+SRC = 	src/create_file.c	\
+	src/project_name.c	\
+	src/utils.c	\
+	src/build.c	\
+	src/file_engine.c	\
+	src/parser.c	\
+	src/formater.c	\
+	src/my_touch.c	\
+	src/makefile/dir.c	\
+	src/makefile/makefile_builder.c	\
 
 OBJ = 	$(SRC:.c=.o)
 
@@ -40,3 +40,5 @@ re:	fclean all
 
 valgrind : fclean
 	gcc -o $(NAME) $(SRC) $(CFLAGS) -g
+
+## Makefile generate by MyTouch : @charly.le-corre

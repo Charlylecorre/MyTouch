@@ -9,34 +9,6 @@ void make_python(int fd)
     dprintf(fd, "    exit(0)\n");
 }
 
-void make_makefile(char *makefile, int fd, int an)
-{
-    makefile_builder(makefile, fd, an);
-//    dprintf(fd, "##\n");
-//    dprintf(fd, "## EPITECH PROJECT, %i\n", an);
-//    dprintf(fd, "## MAKEFILE\n");
-//    dprintf(fd, "## File description:\n");
-//    dprintf(fd, "## Makefile\n");
-//    dprintf(fd, "##\n\n");
-//    dprintf(fd, "NAME = \n\n");
-//    dprintf(fd, "SRC = exemple.cpp\t\\\n\n");
-//    dprintf(fd, "OBJ = 	$(SRC:.cpp=.o)\n\n");
-//    dprintf(fd, "CFLAGS = -I include -W -Wall -Wextra\n\n");
-//    dprintf(fd, "all:	$(NAME)\n\n");
-//    dprintf(fd, "$(NAME) : $(OBJ)\n");
-//    dprintf(fd, "	gcc -o $(NAME) $(OBJ) $(CFLAGS)\n\n");
-//    dprintf(fd, "clean:\n");
-//    dprintf(fd, "	rm -f $(OBJ)\n");
-//    dprintf(fd, "	rm -f *~\n");
-//    dprintf(fd, "	rm -f vgcore.*\n");
-//    dprintf(fd, "	rm -f Test\n\n");
-//    dprintf(fd, "fclean: clean\n");
-//    dprintf(fd, "	rm -f $(NAME)\n\n");
-//    dprintf(fd, "re:	fclean all\n\n");
-//    dprintf(fd, "valgrind : fclean\n");
-//    dprintf(fd, "	gcc -o $(NAME) $(SRC) $(CFLAGS) -g\n");
-}
-
 int do_hpp(char *project, char **arg, int fd, char *path)
 {
     char *define = define_formateur(path);
@@ -114,7 +86,7 @@ int print_header(int fd, char *path, int type, char **arg)
     }
 
     if (type == MAKEFILE)
-        make_makefile(path, fd, an);
+        makefile_builder(fd, an, arg);
     if (type == PYTHON)
         make_python(fd);
     if (type == SH)

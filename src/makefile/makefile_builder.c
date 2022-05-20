@@ -26,15 +26,15 @@ char **ext_filter(char **list, int type)
     return (final_list);
 }
 
-int find_makefile_type(char *makefile)
+int find_makefile_type(char **ext)
 {
     int type[2] = {C, CPP};
-    char *ref_type[2] = {".c", ".cpp"};
-    int i = 0;
+    char *ref_type[2] = {"c", "cpp"};
 
-    for (; makefile[i] && makefile[i] != '.'; i++);
+    if (ext[1] == NULL)
+        return (C);
     for (int j = 0; j < 2; j++) {
-        if (strcmp(&makefile[i], ref_type[j]) == 0)
+        if (strcmp(ext[1], ref_type[j]) == 0)
             return (type[j]);
     }
     return (C);
@@ -98,10 +98,13 @@ int print_makefile(char *name, int fd, int an, char **src, int type)
     dprintf(fd, "##\n\n");
     dprintf(fd, "NAME = %s\n\n", name);
 
+    if (src == NULL || src[0] == NULL)
+        dprintf(fd, "SRC =\n");
     for (int i = 0; src && src[i]; i++) {
         if (i == 0)
-            dprintf(fd, "SRC = \t%s\t\\\n", src[i]);
-        dprintf(fd, "\t%s\t\\\n", src[i]);
+            dprintf(fd, "SRC =\t%s\t\\\n", src[i]);
+        else
+            dprintf(fd, "     \t%s\t\\\n", src[i]);
     }
     dprintf(fd, "\n");
 
@@ -129,18 +132,14 @@ int print_makefile(char *name, int fd, int an, char **src, int type)
     return (0);
 }
 
-int makefile_builder(char *makefile, int fd, int an)
+int makefile_builder(int fd, int an, char **ext)
 {
-    int type = find_makefile_type(makefile);
+    int type = find_makefile_type(ext);
     char *project_name = find_makefile_project_name();
     char **file_list = recup_file_in_dir(".", type);
 
     if (project_name == NULL || file_list == NULL)
         return (error_message("Error: Allocation failed!\n"));
-//    printf(CYN"Name = %s\n" NC, project_name);
-//    printf(RED"Type = %i\n"NC, type);
-//    printf("File_list:\n");
-//    display_list(file_list);
 
     print_makefile(project_name, fd, an, file_list, type);
 

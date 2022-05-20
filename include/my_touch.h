@@ -56,7 +56,7 @@ int dir_len(char *path, int search);
 char **recup_file_in_dir(char *path, int type);
 
 //makefile_builder.c
-int makefile_builder(char *makefile, int fd, int an);
+int makefile_builder(int fd, int an, char **ext);
 char **ext_filter(char **list, int type);
 
 //my_touch.c
@@ -65,7 +65,6 @@ void make_makefile(char *makefile, int fd, int an);
 int do_hpp(char *project, char **arg, int fd, char *path);
 int do_cpp(char **arg, int fd);
 int print_header(int fd, char *path, int type, char **arg);
-int create_file(char *path, int type, char **arg, int replace);
 
 //parser.c
 int parser_len(char **arg);

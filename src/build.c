@@ -42,8 +42,10 @@ char *build_file_name(char *path, int type)
     int len = strlen(path);
     char *new_path = NULL;
 
-    if (type == 3)
+    if (type == PYTHON)
         len -= 3;
+    if (type == MAKEFILE)
+        len = strlen("Makefile");
     if ((new_path = malloc(sizeof(char) * (len + 1))) == NULL)
         return (NULL);
     for (int i = 0; i < len; i++) {
