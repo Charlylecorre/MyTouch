@@ -5,18 +5,18 @@
 ## Makefile
 ##
 
-NAME = my_touch
+NAME = MyTouch
 
-SRC = 	src/create_file.c	\
-	src/project_name.c	\
-	src/utils.c	\
-	src/build.c	\
-	src/file_engine.c	\
-	src/parser.c	\
-	src/formater.c	\
-	src/my_touch.c	\
-	src/makefile/dir.c	\
-	src/makefile/makefile_builder.c	\
+SRC =	src/create_file.c	\
+     	src/project_name.c	\
+     	src/utils.c	\
+     	src/build.c	\
+     	src/file_engine.c	\
+     	src/parser.c	\
+     	src/formater.c	\
+     	src/my_touch.c	\
+     	src/makefile/dir.c	\
+     	src/makefile/makefile_builder.c	\
 
 OBJ = 	$(SRC:.c=.o)
 
