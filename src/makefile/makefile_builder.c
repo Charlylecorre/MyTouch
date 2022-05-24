@@ -54,7 +54,8 @@ char **remove_doublon(char **list)
         return (NULL);
     for (int i = 0; list && list[i]; i++) {
         if (strcmp(list[i], "") != 0) {
-            new_list[index++] = strdup(list[i]);
+            new_list[index] = strdup(list[i]);
+            index++;
         }
     }
     new_list[index] = NULL;
@@ -66,12 +67,14 @@ char **dir_filter(char **list)
 {
     int size = array_size(list);
     char **filter = malloc(sizeof (char *) * (size + 1));
+    int i = 0;
 
     if (filter == NULL)
         return (NULL);
-    for (int i = 0; list && list[i]; i++) {
+    for (; list && list[i]; i++) {
         filter[i] = only_dir(list[i]);
     }
+    filter[i] = NULL;
     free_array(list);
     return (filter);
 }
@@ -155,7 +158,12 @@ char *type_to_str(int type)
 int print_makefile(char *name, int fd, int an, char **src, char **hpp, int type)
 {
     char *str_type = type_to_str(type);
+    struct stat lib_dir;
+    int lib = 0;
 
+    stat("lib/", &lib_dir);
+    if (S_ISDIR(lib_dir.st_mode))
+        lib = 1;
     if (str_type == NULL)
         return (error_message("Error: Makefile type not found!\n"));
 
@@ -178,32 +186,47 @@ int print_makefile(char *name, int fd, int an, char **src, char **hpp, int type)
     dprintf(fd, "\n");
 
     dprintf(fd, "OBJ = 	$(SRC:.%s=.o)\n\n", str_type);
-    if (type == C)
-        dprintf(fd, "CFLAGS = -I include -W -Wall -Wextra\n\n");
-    if (type == CPP) {
-        dprintf(fd, "CXXFLAGS += ");
-        for (int i = 0; hpp && hpp[i]; i++) {
-            dprintf(fd, "-I %s ", hpp[i]);
-        }
-        dprintf(fd, "-std=c++20 -W -Wall -Wextra\n\n");
+    if (type == C) {
+        dprintf(fd, "CFLAGS = ");
     }
-    dprintf(fd, "LIBS =	\n\n");
+    if (type == CPP)
+        dprintf(fd, "CXXFLAGS += ");
+    for (int i = 0; hpp && hpp[i]; i++) {
+        dprintf(fd, "-I %s ", hpp[i]);
+    }
+    if (type == CPP)
+        dprintf(fd, "-std=c++20 ");
+    dprintf(fd, "-W -Wall -Wextra\n\n");
+    dprintf(fd, "LIBS =");
+    if (type == C && lib == 1)
+        dprintf(fd, " -L lib/ -l my");
+    dprintf(fd, "\n\n");
     dprintf(fd, "all:	$(NAME)\n\n");
     dprintf(fd, "$(NAME) : $(OBJ)\n");
-    if (type == C)
-        dprintf(fd, "	gcc -o $(NAME) $(OBJ) $(CFLAGS) $(LIBS)\n\n");
+    if (type == C) {
+        if (lib == 1)
+            dprintf(fd, "\tmake -C lib/my\n");
+        dprintf(fd, "\tgcc -o $(NAME) $(OBJ) $(CFLAGS) $(LIBS)\n\n");
+    }
     if (type == CPP)
-        dprintf(fd, "	g++ -o $(NAME) $(OBJ) $(LIBS)\n\n");
+        dprintf(fd, "\tg++ -o $(NAME) $(OBJ) $(LIBS)\n\n");
+
     dprintf(fd, "clean:\n");
-    dprintf(fd, "	rm -f $(OBJ)\n");
-    dprintf(fd, "	rm -f *~\n");
-    dprintf(fd, "	rm -f vgcore.*\n");
-    dprintf(fd, "	rm -f Test\n\n");
+    if (type == C && lib == 1)
+        dprintf(fd, "\tmake -C lib/my clean\n");
+    dprintf(fd, "\trm -f $(OBJ)\n");
+    dprintf(fd, "\trm -f *~\n");
+    dprintf(fd, "\trm -f vgcore.*\n");
+    dprintf(fd, "\trm -f Test\n\n");
+
     dprintf(fd, "fclean: clean\n");
-    dprintf(fd, "	rm -f $(NAME)\n\n");
-    dprintf(fd, "re:	fclean all\n\n");
-    dprintf(fd, "valgrind : fclean\n");
-    dprintf(fd, "	gcc -o $(NAME) $(SRC) $(CFLAGS) -g\n\n");
+    if (type == C && lib == 1)
+        dprintf(fd, "\tmake -C lib/my fclean\n");
+    dprintf(fd, "\trm -f $(NAME)\n\n");
+
+    dprintf(fd, "re:\tfclean all\n\n");
+    dprintf(fd, "valgrind :\tfclean\n");
+    dprintf(fd, "\tgcc -o $(NAME) $(SRC) $(CFLAGS) -g\n\n");
     dprintf(fd, "## Makefile generate by MyTouch : @charly.le-corre\n");
 
     free(str_type);
@@ -215,7 +238,12 @@ int makefile_builder(int fd, int an, char **ext)
     int type = find_makefile_type(ext);
     char *project_name = find_makefile_project_name();
     char **file_list = recup_file_in_dir(".", type);
-    char **hpp_list = recup_file_in_dir(".", HPP);
+    char **hpp_list = NULL;
+
+    if (type == C)
+        hpp_list = recup_file_in_dir(".", H);
+    if (type == CPP)
+        hpp_list = recup_file_in_dir(".", HPP);
 
     if (project_name == NULL || file_list == NULL || hpp_list == NULL)
         return (error_message("Error: Allocation failed!\n"));

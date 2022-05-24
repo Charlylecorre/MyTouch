@@ -7,25 +7,27 @@
 
 NAME = my_touch
 
-SRC =	src/create_file.c	\
-     	src/project_name.c	\
-     	src/utils.c	\
-     	src/build.c	\
+SRC =	src/build.c	\
+     	src/create_file.c	\
      	src/file_engine.c	\
-     	src/parser.c	\
      	src/formater.c	\
      	src/my_touch.c	\
+     	src/parser.c	\
+     	src/project_name.c	\
+     	src/utils.c	\
      	src/makefile/dir.c	\
      	src/makefile/makefile_builder.c	\
 
 OBJ = 	$(SRC:.c=.o)
 
-CFLAGS = -I include -W -Wall -Wextra
+CFLAGS = -I include/ -W -Wall -Wextra
+
+LIBS =	
 
 all:	$(NAME)
 
 $(NAME) : $(OBJ)
-	gcc -o $(NAME) $(OBJ) $(CFLAGS)
+	gcc -o $(NAME) $(OBJ) $(CFLAGS) $(LIBS)
 	rm ../my_touch
 	cp my_touch ../
 

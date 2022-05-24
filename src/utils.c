@@ -17,7 +17,8 @@ int array_size(char **av)
 
 int is_banned_dir(char *path)
 {
-    if (strcmp(path, ".") == 0 || strcmp(path, "..") == 0 || strcmp(path, "tests") == 0)
+    if (strcmp(path, ".") == 0 || strcmp(path, "..") == 0 || strcmp(path, "tests") == 0
+        || strcmp(path, "bonus") == 0 || strcmp(path, "lib") == 0)
         return (-1);
     if (strcmp(path, ".idea") == 0 || strcmp(path, ".git") == 0
         || strcmp(path, "cmake-build-debug") == 0)
