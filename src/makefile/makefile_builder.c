@@ -155,7 +155,7 @@ char *type_to_str(int type)
     return (NULL);
 }
 
-int print_makefile(char *name, int fd, int an, char **src, char **hpp, int type)
+int print_makefile(char *name, int fd, int an, char **src, char **hpp, char **libs, int type)
 {
     char *str_type = type_to_str(type);
     struct stat lib_dir;
@@ -197,7 +197,13 @@ int print_makefile(char *name, int fd, int an, char **src, char **hpp, int type)
     if (type == CPP)
         dprintf(fd, "-std=c++20 ");
     dprintf(fd, "-W -Wall -Wextra\n\n");
+
     dprintf(fd, "LIBS =");
+    for (int i = 0; libs[i]; i++) {
+        printf(CYN"[+] Lib: "GRN"%s\n"NC, libs[i]);
+        dprintf(fd, " %s", libs[i]);
+    }
+
     if (type == C && lib == 1)
         dprintf(fd, " -L lib/ -l my");
     dprintf(fd, "\n\n");
@@ -239,20 +245,31 @@ int makefile_builder(int fd, int an, char **ext)
     char *project_name = find_makefile_project_name();
     char **file_list = recup_file_in_dir(".", type);
     char **hpp_list = NULL;
+    char **libs = NULL;
 
-    if (type == C)
+    if (type == C) {
         hpp_list = recup_file_in_dir(".", H);
-    if (type == CPP)
+    }
+    if (type == CPP) {
         hpp_list = recup_file_in_dir(".", HPP);
+    }
 
     if (project_name == NULL || file_list == NULL || hpp_list == NULL)
         return (error_message("Error: Allocation failed!\n"));
-    if ((hpp_list = dir_filter(hpp_list)) == NULL || (hpp_list = remove_doublon(hpp_list)) == NULL)
+    if ((libs = getlib(file_list, hpp_list)) == NULL ||
+        (hpp_list = dir_filter(hpp_list)) == NULL ||
+        (hpp_list = remove_doublon(hpp_list)) == NULL ||
+        (libs = remove_doublon(libs)) == NULL) {
+        free_array(file_list);
+        free_array(hpp_list);
+        free_array(libs);
         return (error_message("Error: Allocation failed!\n"));
-    print_makefile(project_name, fd, an, file_list, hpp_list, type);
-    printf(RED"⚠️ " RED" Libs are not generate by the AutoMakefile generator!\n"NC);
+    }
+    print_makefile(project_name, fd, an, file_list, hpp_list, libs, type);
+    printf(RED"⚠️ " YEL" ALL"RED" libs are not generate by the AutoMakefile generator!\n"NC);
     free(project_name);
     free_array(hpp_list);
     free_array(file_list);
+    free_array(libs);
     return (0);
 }

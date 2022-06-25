@@ -49,15 +49,20 @@ char *define_formateur(char *define);
 char *cpp_formater(char *path);
 
 
-//Makefile
-//dir.c
-char **get_dir_list(char *path, int search);
-int dir_len(char *path, int search);
-char **recup_file_in_dir(char *path, int type);
+    //Makefile
+        //getlib
+        //getlib.c
+        char **getlib(char **src, char **include);
 
-//makefile_builder.c
-int makefile_builder(int fd, int an, char **ext);
-char **ext_filter(char **list, int type);
+    //dir.c
+    char **add_to_file_list(char **list, char **add_list);
+    char **get_dir_list(char *path, int search);
+    int dir_len(char *path, int search);
+    char **recup_file_in_dir(char *path, int type);
+
+    //makefile_builder.c
+    int makefile_builder(int fd, int an, char **ext);
+    char **ext_filter(char **list, int type);
 
 //my_touch.c
 void make_python(int fd);
@@ -80,13 +85,17 @@ void free_parser(char **parser);
 char *get_project_name(char *path);
 
 //utils.c
+char **str_to_word_array(char *str, char stop);
+char **concat_array(char **libs, char **tmp_list);
+char **add_to_arrayV2(char **array, char *str);
+char **add_to_array(char **array, char *str);
 int replace_mod(char **av);
 int find_type(char *path);
 int arg_conatain(char **arg, char *src);
 int display_help(void);
 int is_letter(char c);
 int error_message(char *msg);
-void display_list(char **av);
+void display_list(char *msg, char **av);
 void free_array(char **av);
 int is_banned_dir(char *path);
 int array_size(char **av);

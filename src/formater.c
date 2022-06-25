@@ -17,12 +17,14 @@ char *define_formateur(char *define)
         return (NULL);
     for (; define[i] != '\0'; i++) {
         c = define[i];
-        if ((c >= 'a' || c <= 'z') && c != '.')
-            new[i] = c - 32;
+        if ((c >= 'a' && c <= 'z') && c != '.')
+            c = c - 32;
         if (is_letter(c) != 1)
-            new[i] = '_';
+            c = '_';
+        new[i] = c;
     }
     new[i] = '\0';
+    //printf("Define = %s\n", new);
     return (new);
 }
 

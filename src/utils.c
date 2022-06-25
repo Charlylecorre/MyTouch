@@ -7,6 +7,110 @@
 
 #include "my_touch.h"
 
+int find_array_size(char *buff, char stop)
+{
+    int size = 0;
+
+    for (int i = 0; buff[i]; i++)
+        if (buff[i] == stop)
+            size++;
+    return (size);
+}
+
+int find_next_len(char *str, char stop)
+{
+    int len = 0;
+
+    for (;str[len] && str[len] != stop; len++);
+    return (len);
+}
+
+char *next_str(char *str, char stop, int next_len)
+{
+    char *next_str = malloc(sizeof(char) * (next_len + 1));
+    int i = 0;
+
+    if (next_str == NULL)
+        return (NULL);
+    for (; str[i] && str[i] != stop; i++)
+        next_str[i] = str[i];
+    next_str[i] = '\0';
+    return (next_str);
+}
+
+char **str_to_word_array(char *str, char stop)
+{
+    char **array = NULL;
+    int size = find_array_size(str, stop);
+    int next_len = 0;
+    int j = 0;
+
+    if (str == NULL)
+        return (NULL);
+    if ((array = malloc(sizeof(char *) * (size + 1))) == NULL)
+        return (NULL);
+    for (int i = 0; str[i]; i += next_len + 1) {
+        next_len = find_next_len(&str[i], stop);
+        if (next_len != 0) {
+            array[j] = next_str(&str[i], stop, next_len);
+            array[j + 1] = NULL;
+            if (array[j] == NULL) {
+                free_array(array);
+                return (NULL);
+            }
+            j++;
+        }
+    }
+    return (array);
+}
+
+char **add_to_arrayV2(char **array, char *str)
+{
+    int size = array_size(array);
+    char **new_array = malloc(sizeof(char *) * (size + 2));
+    int i = 0;
+
+    if (new_array == NULL)
+        return (NULL);
+    for (; array[i]; i++) {
+        new_array[i] = strdup(array[i]);
+    }
+    new_array[i] = strdup(str);
+    new_array[i + 1] = NULL;
+    free_array(array);
+    return (new_array);
+}
+
+char **add_to_array(char **array, char *str)
+{
+    int size = array_size(array);
+
+    array = realloc(array, sizeof(char *) * (size + 2));
+    if (array == NULL || (array[size] = strdup(str)) == NULL)
+        return (NULL);
+    array[size + 1] = NULL;
+    //display_list("ADD ARRAY", array);
+    return (array);
+}
+
+char **concat_array(char **libs, char **tmp_list)
+{
+    int i = array_size(libs);
+    int add = array_size(tmp_list);
+    int size = i + add;
+
+    if (tmp_list == NULL)
+        return (0);
+    libs = realloc(libs, sizeof(char *) * (size + 1));
+    if (libs == NULL)
+        return (NULL);
+    for (int j = 0; tmp_list[j]; j++, i++) {
+        libs[i] = strdup(tmp_list[j]);
+        libs[i + 1] = NULL;
+    }
+    return (libs);
+}
+
 int array_size(char **av)
 {
     int len = 0;
@@ -26,10 +130,11 @@ int is_banned_dir(char *path)
     return (0);
 }
 
-void display_list(char **av)
+void display_list(char *msg, char **av)
 {
     int i = 0;
 
+    printf(PIN"Display list ["CYN"%s"PIN"]\n"NC, msg);
     if (av == NULL)
         printf(RED"List : NULL\n"NC);
     for (; av && av[i]; i++)

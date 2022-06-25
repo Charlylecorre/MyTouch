@@ -17,10 +17,11 @@ SRC =	src/build.c	\
      	src/utils.c	\
      	src/makefile/dir.c	\
      	src/makefile/makefile_builder.c	\
+     	src/makefile/getlib/getlib.c	\
 
 OBJ = 	$(SRC:.c=.o)
 
-CFLAGS = -I include/ -W -Wall -Wextra
+CFLAGS = -I include/ -W -Wall -Wextra -g
 
 LIBS =	
 
