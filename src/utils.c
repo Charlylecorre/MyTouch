@@ -14,7 +14,7 @@ int find_array_size(char *buff, char stop)
     for (int i = 0; buff[i]; i++)
         if (buff[i] == stop)
             size++;
-    return (size);
+    return (size + 1);
 }
 
 int find_next_len(char *str, char stop)
@@ -49,7 +49,7 @@ char **str_to_word_array(char *str, char stop)
         return (NULL);
     if ((array = malloc(sizeof(char *) * (size + 1))) == NULL)
         return (NULL);
-    for (int i = 0; str[i]; i += next_len + 1) {
+    for (int i = 0; str[i];) {
         next_len = find_next_len(&str[i], stop);
         if (next_len != 0) {
             array[j] = next_str(&str[i], stop, next_len);
@@ -60,6 +60,9 @@ char **str_to_word_array(char *str, char stop)
             }
             j++;
         }
+        i += next_len;
+        if (str[i] == stop)
+            i++;
     }
     return (array);
 }
@@ -158,7 +161,8 @@ int find_type(char *path)
 
     if (strncmp(path, "Makefile", strlen("Makefile")) == 0)
         return (2);
-    for (; path[i] != '\0' && path[i] != '.'; i++);
+    for (; path[i]; i++);
+    for (; i > 0 && path[i] != '.'; i--);
     if (path[i] != '.')
         return (-1);
     for (int j = 0; type[j] != NULL; j++) {

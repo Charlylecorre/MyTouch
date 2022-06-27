@@ -140,6 +140,10 @@ char **recup_file_in_dir(char *path, int type)
     char **file_here = get_dir_list(path, ONLY_FILE);
     char **other_path = get_dir_list(path, ONLY_DIR);
 
+//    printf("----[%s]-----\n", path);
+//    display_list("FILE", file_here);
+//    display_list("DIR", other_path);
+//    printf("--------------\n\n");
     if (file_here == NULL || other_path == NULL)
         return (NULL);
     file_here = ext_filter(file_here, type);
@@ -147,5 +151,6 @@ char **recup_file_in_dir(char *path, int type)
         file_here = add_to_file_list(file_here, recup_file_in_dir(other_path[i], type));
     }
     free_array(other_path);
+    //display_list(path, file_here);
     return (file_here);
 }

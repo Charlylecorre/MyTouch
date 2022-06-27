@@ -161,8 +161,7 @@ int print_makefile(char *name, int fd, int an, char **src, char **hpp, char **li
     struct stat lib_dir;
     int lib = 0;
 
-    stat("lib/", &lib_dir);
-    if (S_ISDIR(lib_dir.st_mode))
+    if (stat("lib/", &lib_dir) != -1 && S_ISDIR(lib_dir.st_mode))
         lib = 1;
     if (str_type == NULL)
         return (error_message("Error: Makefile type not found!\n"));
@@ -254,6 +253,8 @@ int makefile_builder(int fd, int an, char **ext)
         hpp_list = recup_file_in_dir(".", HPP);
     }
 
+    //display_list("Project", file_list);
+    //display_list("HPP", hpp_list);
     if (project_name == NULL || file_list == NULL || hpp_list == NULL)
         return (error_message("Error: Allocation failed!\n"));
     if ((libs = getlib(file_list, hpp_list)) == NULL ||

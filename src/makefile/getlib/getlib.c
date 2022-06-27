@@ -12,8 +12,8 @@ char *find_lib(char *line)
     char *lib = NULL;
     char *sfml[8] = {"<SFML/Window.h>", "<SFML/Audio.h>", "<SFML/Graphics/RenderWindow.h>", "<SFML/Config.h>", "<SFML/System.h>", "<SFML/Graphics/Export.h>", "<SFML/Graphics.h>", NULL};
     char *sfml_ref = "-lcsfml-system -lcsfml-window -lcsfml-graphics -lcsfml-audio";
-    char *simple[3] = {"<ncurses.h>", "<math.h>", NULL};
-    char *simple_ref[3] = {"-lncurses", "-lm", NULL};
+    char *simple[4] = {"<ncurses.h>", "<math.h>", "<pthread.h>", NULL};
+    char *simple_ref[4] = {"-lncurses", "-lm", "-lpthread", NULL};
 
     for (int i = 0; sfml[i]; i++) {
         if (strstr(line, "#include") != NULL && strstr(line, sfml[i]) != NULL) {
@@ -77,6 +77,7 @@ char **getlib(char **src, char **include)
             return (NULL);
         free_array(tmp_list);
         tmp_list = NULL;
+        //printf(GRN"+1 : %s\n", src[i]);
     }
 
     for (int i = 0; include[i]; i++) {
@@ -85,6 +86,7 @@ char **getlib(char **src, char **include)
             return (NULL);
         free_array(tmp_list);
         tmp_list = NULL;
+        //printf(GRN"+1 : %s\n", include[i]);
     }
 
     return (libs);
