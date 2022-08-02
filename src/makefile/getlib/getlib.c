@@ -10,10 +10,19 @@
 char *find_lib(char *line)
 {
     char *lib = NULL;
-    char *sfml[8] = {"<SFML/Window.h>", "<SFML/Audio.h>", "<SFML/Graphics/RenderWindow.h>", "<SFML/Config.h>", "<SFML/System.h>", "<SFML/Graphics/Export.h>", "<SFML/Graphics.h>", NULL};
-    char *sfml_ref = "-lcsfml-system -lcsfml-window -lcsfml-graphics -lcsfml-audio";
+    char *csfml[8] = {"<SFML/Window.h>", "<SFML/Audio.h>", "<SFML/Graphics/RenderWindow.h>", "<SFML/Config.h>", "<SFML/System.h>", "<SFML/Graphics/Export.h>", "<SFML/Graphics.h>", NULL};
+    char *csfml_ref = "-lcsfml-system -lcsfml-window -lcsfml-graphics -lcsfml-audio";
     char *simple[4] = {"<ncurses.h>", "<math.h>", "<pthread.h>", NULL};
     char *simple_ref[4] = {"-lncurses", "-lm", "-lpthread", NULL};
+    char *sfml[2] = {"#include <SFML/Graphics.hpp>", NULL};
+    char *sfml_ref = "-lsfml-window -lsfml-graphics -lsfml-system";
+
+    for (int i = 0; csfml[i]; i++) {
+        if (strstr(line, "#include") != NULL && strstr(line, csfml[i]) != NULL) {
+            lib = strdup(csfml_ref);
+            return (lib);
+        }
+    }
 
     for (int i = 0; sfml[i]; i++) {
         if (strstr(line, "#include") != NULL && strstr(line, sfml[i]) != NULL) {
@@ -21,6 +30,7 @@ char *find_lib(char *line)
             return (lib);
         }
     }
+
     for (int i = 0; simple[i]; i++) {
         if (strstr(line, "#include") != NULL && strstr(line, simple[i]) != NULL) {
             lib = strdup(simple_ref[i]);

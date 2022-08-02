@@ -42,7 +42,7 @@ char *build_file_name(char *path, int type)
     int len = strlen(path);
     char *new_path = NULL;
 
-    if (type == PYTHON)
+    if (type == PYTHON || type == SH)
         len -= 3;
     if (type == MAKEFILE)
         len = strlen("Makefile");

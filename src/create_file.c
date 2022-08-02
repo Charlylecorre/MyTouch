@@ -13,9 +13,9 @@ int create_file(char *path, int type, char **arg, int replace)
     char *file_name = build_file_name(path, type);
     char *type_equal[] = {".c", ".h", "Makefile", "Python", ".sh", ".cpp", ".hpp"};
 
-    if (type != PYTHON)
+    if (type != PYTHON && type != SH)
         file = open(file_name, O_CREAT | O_RDWR | replace, 0664);
-    if (type == PYTHON)
+    if (type == PYTHON || type == SH)
         file = open(file_name, O_CREAT | O_RDWR | replace, 0755);
     if (file == -1) {
         free(file_name);

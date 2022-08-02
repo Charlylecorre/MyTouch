@@ -7,6 +7,16 @@
 
 #include "my_touch.h"
 
+char **add_lib_var(char **libs, char **hpp)
+{
+    for (int i = 0; libs[i]; i++) {
+        if (strcmp(libs[i], "-lsfml-window -lsfml-graphics -lsfml-system") == 0 &&
+            (hpp = add_to_array(hpp, "$(SFML_INCLUDE) $(SFML_LIB)")) == NULL)
+            return (NULL);
+    }
+    return (hpp);
+}
+
 char *only_dir(char *list)
 {
     int len = strlen(list);
@@ -211,10 +221,11 @@ int print_makefile(char *name, int fd, int an, char **src, char **hpp, char **li
     if (type == C) {
         if (lib == 1)
             dprintf(fd, "\tmake -C lib/my\n");
-        dprintf(fd, "\tgcc -o $(NAME) $(OBJ) $(CFLAGS) $(LIBS)\n\n");
+        dprintf(fd, "\tgcc -o $(NAME) $(OBJ) $(CFLAGS) $(LIBS)\n");
+        dprintf(fd, "\techo \"%sBuild complete !%s\"\n", GRN, NC);
     }
     if (type == CPP)
-        dprintf(fd, "\tg++ -o $(NAME) $(OBJ) $(LIBS)\n\n");
+        dprintf(fd, "\tg++ -o $(NAME) $(OBJ) $(CXXFLAGS) $(LIBS)\n\n");
 
     dprintf(fd, "clean:\n");
     if (type == C && lib == 1)
@@ -232,6 +243,11 @@ int print_makefile(char *name, int fd, int an, char **src, char **hpp, char **li
     dprintf(fd, "re:\tfclean all\n\n");
     dprintf(fd, "valgrind :\tfclean\n");
     dprintf(fd, "\tgcc -o $(NAME) $(SRC) $(CFLAGS) -g\n\n");
+    dprintf(fd, "reload :\n");
+    dprintf(fd, "\tmy_touch Makefile");
+    if (type == CPP)
+        dprintf(fd, ".cpp");
+    dprintf(fd, " -r\n\n");
     dprintf(fd, "## Makefile generate by MyTouch : @charly.le-corre\n");
 
     free(str_type);
@@ -260,7 +276,7 @@ int makefile_builder(int fd, int an, char **ext)
     if ((libs = getlib(file_list, hpp_list)) == NULL ||
         (hpp_list = dir_filter(hpp_list)) == NULL ||
         (hpp_list = remove_doublon(hpp_list)) == NULL ||
-        (libs = remove_doublon(libs)) == NULL) {
+        (libs = remove_doublon(libs)) == NULL || (hpp_list = add_lib_var(libs, hpp_list)) == NULL) {
         free_array(file_list);
         free_array(hpp_list);
         free_array(libs);
