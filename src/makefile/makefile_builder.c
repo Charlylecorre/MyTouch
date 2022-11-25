@@ -122,6 +122,48 @@ int find_makefile_type(char **ext)
     return (C);
 }
 
+char *epitech_formater(char *name)
+{
+    int i = 0;
+    int count = 0;
+    int size = 0;
+    char *new_name = NULL;
+
+    if (name[i] != 'B')
+        return name;
+    i++;
+    if (name[i] != '-')
+        return name;
+    i++;
+    count++;
+    for (; name[i] && name[i] >= 'A' && name[i] <= 'Z'; i++);
+    if (name[i] != '-')
+        return name;
+    count++;
+    i++;
+    for (; name[i] && name[i] >= '0' && name[i] <= '9'; i++);
+    if (name[i] != '-')
+        return name;
+    count++;
+    i++;
+    for (; name[i] != '\0' && count <= 5; i++)
+        if (name[i] == '-')
+            count++;
+    if (count != 6 || name[i] == '\0')
+        return name;
+    for (int j = i; name[j] != '\0' && name[j] != '-'; j++, size++);
+    if (size == 0)
+        return name;
+    printf(PIN"Epitech Project !\n"NC);
+    new_name = malloc(sizeof(char) * (size + 1));
+    for (int j = 0; name[i] != '\0' && name[i] != '-'; j++, i++) {
+        new_name[j] = name[i];
+        new_name[j + 1] = '\0';
+    }
+    free(name);
+    return (new_name);
+}
+
 char *find_makefile_project_name()
 {
     size_t size = PATH_MAX;
@@ -129,7 +171,7 @@ char *find_makefile_project_name()
     char *name = NULL;
     int len = 0;
     int j = 0;
-    int i;
+    size_t i;
 
     if (pwd == NULL)
         return (NULL);
@@ -144,6 +186,7 @@ char *find_makefile_project_name()
         name[j] = pwd[i];
     name[j] = '\0';
     free(pwd);
+    name = epitech_formater(name);
     return (name);
 }
 
