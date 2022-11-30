@@ -7,6 +7,23 @@
 
 #include "my_touch.h"
 
+int multi_cmp(int nb, char *str, ...)
+{
+    va_list multi_str;
+    va_start(multi_str, str);
+    char *local;
+
+    for (int i = 0; i < nb; i++) {
+        local = (char *) va_arg(multi_str, char *);
+        if (strcmp(str, local) == 0) {
+            va_end(multi_str);
+            return (1);
+        }
+    }
+    va_end(multi_str);
+    return (0);
+}
+
 int find_array_size(char *buff, char stop)
 {
     int size = 0;
@@ -144,6 +161,15 @@ void display_list(char *msg, char **av)
         printf(YEL"av[%i]:" CYN" %s\n" NC, i, av[i]);
     if (av && av[i] == NULL)
         printf(YEL"av[%i]:" RED" NULL\n" NC, i);
+}
+
+int search_av(char **av, char *str)
+{
+    for (int i = 0; av[i] != NULL; i++) {
+        if (strcmp(av[i], str) == 0)
+            return (1);
+    }
+    return (0);
 }
 
 int replace_mod(char **av)

@@ -5,33 +5,31 @@
 ## Makefile
 ##
 
-NAME = my_touch
+NAME = MyTouch
 
-SRC =	src/build.c	\
-     	src/create_file.c	\
-     	src/file_engine.c	\
-     	src/formater.c	\
-     	src/my_touch.c	\
-     	src/parser.c	\
+SRC =	src/create_file.c	\
      	src/project_name.c	\
      	src/utils.c	\
+     	src/build.c	\
+     	src/file_engine.c	\
+     	src/parser.c	\
+     	src/formater.c	\
+     	src/my_touch.c	\
      	src/makefile/dir.c	\
      	src/makefile/makefile_builder.c	\
      	src/makefile/getlib/getlib.c	\
 
 OBJ = 	$(SRC:.c=.o)
 
-CFLAGS = -I include/ -W -Wall -Wextra -g
+CFLAGS = -I include/ -W -Wall -Wextra
 
-LIBS =	
+LIBS = -lncurses
 
 all:	$(NAME)
 
 $(NAME) : $(OBJ)
 	gcc -o $(NAME) $(OBJ) $(CFLAGS) $(LIBS)
-	rm ../my_touch
-	cp my_touch ../
-
+	echo "[0;32mBuild complete ![0m"
 clean:
 	rm -f $(OBJ)
 	rm -f *~
@@ -43,7 +41,10 @@ fclean: clean
 
 re:	fclean all
 
-valgrind : fclean
+valgrind :	fclean
 	gcc -o $(NAME) $(SRC) $(CFLAGS) -g
+
+reload :
+	my_touch Makefile -r
 
 ## Makefile generate by MyTouch : @charly.le-corre

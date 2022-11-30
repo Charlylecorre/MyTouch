@@ -7,6 +7,21 @@
 
 #include "my_touch.h"
 
+void display_automakefile()
+{
+    printf(GRN"\n\n       d8888          888                   888b     d888          888                .d888 d8b 888          \n"
+           "      d88888          888                   8888b   d8888          888               d88P\"  Y8P 888          \n"
+           "     d88P888          888                   88888b.d88888          888               888        888          \n"
+           "    d88P 888 888  888 888888  .d88b.        888Y88888P888  8888b.  888  888  .d88b.  888888 888 888  .d88b.  \n"
+           "   d88P  888 888  888 888    d88\"\"88b       888 Y888P 888     \"88b 888 .88P d8P  Y8b 888    888 888 d8P  Y8b \n"
+           "  d88P   888 888  888 888    888  888       888  Y8P  888 .d888888 888888K  88888888 888    888 888 88888888 \n"
+           " d8888888888 Y88b 888 Y88b.  Y88..88P       888   \"   888 888  888 888 \"88b Y8b.     888    888 888 Y8b.     \n"
+           "d88P     888  \"Y88888  \"Y888  \"Y88P\"        888       888 \"Y888888 888  888  \"Y8888  888    888 888  \"Y8888  \n"
+           "                                                                                                             \n"
+           "                                                                                                             \n"
+           "                                                                                                             \n"NC);
+}
+
 char **add_lib_var(char **libs, char **hpp)
 {
     for (int i = 0; libs[i]; i++) {
@@ -214,6 +229,7 @@ int print_makefile(char *name, int fd, int an, char **src, char **hpp, char **li
     struct stat lib_dir;
     int lib = 0;
 
+    display_automakefile();
     if (stat("lib/", &lib_dir) != -1 && S_ISDIR(lib_dir.st_mode))
         lib = 1;
     if (str_type == NULL)
@@ -297,7 +313,7 @@ int print_makefile(char *name, int fd, int an, char **src, char **hpp, char **li
     return (0);
 }
 
-int makefile_builder(int fd, int an, char **ext)
+int makefile_builder(int fd, int an, char **ext, int debug_mode)
 {
     int type = find_makefile_type(ext);
     char *project_name = find_makefile_project_name();
@@ -316,7 +332,7 @@ int makefile_builder(int fd, int an, char **ext)
     //display_list("HPP", hpp_list);
     if (project_name == NULL || file_list == NULL || hpp_list == NULL)
         return (error_message("Error: Allocation failed!\n"));
-    if ((libs = getlib(file_list, hpp_list)) == NULL ||
+    if ((libs = getlib(file_list, hpp_list, debug_mode)) == NULL ||
         (hpp_list = dir_filter(hpp_list)) == NULL ||
         (hpp_list = remove_doublon(hpp_list)) == NULL ||
         (libs = remove_doublon(libs)) == NULL || (hpp_list = add_lib_var(libs, hpp_list)) == NULL) {

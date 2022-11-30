@@ -46,7 +46,7 @@ int do_cpp(char **arg, int fd)
     return (0);
 }
 
-int print_header(int fd, char *path, int type, char **arg)
+int print_header(int fd, char *path, int type, char **arg, int debug_mode)
 {
     time_t now;
     int an = 0;
@@ -86,7 +86,7 @@ int print_header(int fd, char *path, int type, char **arg)
     }
 
     if (type == MAKEFILE)
-        makefile_builder(fd, an, arg);
+        makefile_builder(fd, an, arg, debug_mode);
     if (type == PYTHON)
         make_python(fd);
     if (type == SH)
@@ -103,11 +103,12 @@ int print_header(int fd, char *path, int type, char **arg)
 int main(int ac, char **av)
 {
     int replace = replace_mod(av);
+    int debug_mode = search_av(av, "-debug");
 
     if (ac == 1)
         return (display_help());
     for (int i = 1; av[i] != NULL; i++)
-        if (strcmp(av[i], "-r") != 0 && file_engine(av[i], replace) != 0)
+        if (multi_cmp(2, av[i], "-r", "-debug") != 1 && file_engine(av[i], replace, debug_mode) != 0)
             return (84);
 
     return (0);

@@ -14,7 +14,7 @@ char *find_lib(char *line)
     char *csfml_ref = "-lcsfml-system -lcsfml-window -lcsfml-graphics -lcsfml-audio";
     char *simple[4] = {"<ncurses.h>", "<math.h>", "<pthread.h>", NULL};
     char *simple_ref[4] = {"-lncurses", "-lm", "-lpthread", NULL};
-    char *sfml[2] = {"#include <SFML/Graphics.hpp>", NULL};
+    char *sfml[2] = {"<SFML/Graphics.hpp>", NULL};
     char *sfml_ref = "-lsfml-window -lsfml-graphics -lsfml-system";
 
     for (int i = 0; csfml[i]; i++) {
@@ -40,7 +40,7 @@ char *find_lib(char *line)
     return (lib);
 }
 
-char **get_file_lib(char *path)
+char **get_file_lib(char *path, int debug_mode)
 {
     char **libs = NULL;
     char *buff = NULL;
@@ -63,6 +63,10 @@ char **get_file_lib(char *path)
     for (int i = 0; array[i]; i++) {
         line_lib = find_lib(array[i]);
         if (line_lib != NULL) {
+            if (debug_mode == 1) {
+                printf(YEL"Find [" CYN"%s" YEL"] in [" CYN"%s" YEL"]\n"NC, line_lib, path);
+                printf(YEL"➜ %s\n"NC, array[i]);
+            }
             libs = add_to_array(libs, line_lib);
             free(line_lib);
             line_lib = NULL;
@@ -72,7 +76,7 @@ char **get_file_lib(char *path)
     return (libs);
 }
 
-char **getlib(char **src, char **include)
+char **getlib(char **src, char **include, int debug_mode)
 {
     char **libs = NULL;
     char **tmp_list = NULL;
@@ -82,7 +86,7 @@ char **getlib(char **src, char **include)
     libs[0] = NULL;
 
     for (int i = 0; src[i]; i++) {
-        tmp_list = get_file_lib(src[i]);
+        tmp_list = get_file_lib(src[i], debug_mode);
         if (tmp_list[0] != NULL && (libs = concat_array(libs, tmp_list)) == NULL)
             return (NULL);
         free_array(tmp_list);
@@ -91,7 +95,7 @@ char **getlib(char **src, char **include)
     }
 
     for (int i = 0; include[i]; i++) {
-        tmp_list = get_file_lib(include[i]);
+        tmp_list = get_file_lib(include[i], debug_mode);
         if ((libs = concat_array(libs, tmp_list)) == NULL)
             return (NULL);
         free_array(tmp_list);

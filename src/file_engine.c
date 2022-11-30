@@ -7,7 +7,7 @@
 
 #include "my_touch.h"
 
-int file_engine(char *av, int replace)
+int file_engine(char *av, int replace, int debug_mode)
 {
     char **arg = parser(av);
     char *path = NULL;
@@ -15,12 +15,12 @@ int file_engine(char *av, int replace)
     int type = -1;
 
     //display_parser(arg);
-    if (len == 1 && create_file(arg[0], find_type(arg[0]), arg, replace) != 0)
+    if (len == 1 && create_file(arg[0], find_type(arg[0]), arg, replace, debug_mode) != 0)
         return (84);
     for (int j = 1; j < len; j++) {
         path = build_path(arg[0], arg[j]);
         type = find_type(path);
-        if (create_file(path, type, arg, replace) != 0)
+        if (create_file(path, type, arg, replace, debug_mode) != 0)
             return (84);
         free(path);
     }
