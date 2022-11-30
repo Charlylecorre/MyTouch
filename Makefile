@@ -5,7 +5,7 @@
 ## Makefile
 ##
 
-NAME = MyTouch
+NAME = my_touch
 
 SRC =	src/create_file.c	\
      	src/project_name.c	\
@@ -29,6 +29,7 @@ all:	$(NAME)
 
 $(NAME) : $(OBJ)
 	gcc -o $(NAME) $(OBJ) $(CFLAGS) $(LIBS)
+	cp $(NAME) ..
 	echo "[0;32mBuild complete ![0m"
 clean:
 	rm -f $(OBJ)
