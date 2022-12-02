@@ -7,12 +7,13 @@
 
 #include "my_touch.h"
 
-void display_automakefile()
+void display_automakefile(config_t *config)
 {
     initscr();
     int col = COLS;
     endwin();
-    printf("Cols = %i\n", col);
+    if (config->debug_mode == true)
+        printf(YEL"Cols = %i\n"NC, col);
     if (col > 110) {
         printf(GRN"\n\n       d8888          888                   888b     d888          888                .d888 d8b 888          \n"
                "      d88888          888                   8888b   d8888          888               d88P\"  Y8P 888          \n"
@@ -231,13 +232,13 @@ char *type_to_str(int type)
     return (NULL);
 }
 
-int print_makefile(char *name, int fd, int an, char **src, char **hpp, char **libs, int type)
+int print_makefile(char *name, int fd, int an, char **src, char **hpp, char **libs, int type, config_t *config)
 {
     char *str_type = type_to_str(type);
     struct stat lib_dir;
     int lib = 0;
 
-    display_automakefile();
+    display_automakefile(config);
     if (stat("lib/", &lib_dir) != -1 && S_ISDIR(lib_dir.st_mode))
         lib = 1;
     if (str_type == NULL)
@@ -249,7 +250,10 @@ int print_makefile(char *name, int fd, int an, char **src, char **hpp, char **li
     dprintf(fd, "## File description:\n");
     dprintf(fd, "## Makefile\n");
     dprintf(fd, "##\n\n");
-    dprintf(fd, "NAME = %s\n\n", name);
+    if (config->project_name == NULL)
+        dprintf(fd, "NAME = %s\n\n", name);
+    else
+        dprintf(fd, "NAME = %s\n\n", config->project_name);
 
     if (src == NULL || src[0] == NULL)
         dprintf(fd, "SRC =\n");
@@ -321,7 +325,7 @@ int print_makefile(char *name, int fd, int an, char **src, char **hpp, char **li
     return (0);
 }
 
-int makefile_builder(int fd, int an, char **ext, int debug_mode)
+int makefile_builder(int fd, int an, char **ext, config_t *config)
 {
     int type = find_makefile_type(ext);
     char *project_name = find_makefile_project_name();
@@ -340,7 +344,7 @@ int makefile_builder(int fd, int an, char **ext, int debug_mode)
     //display_list("HPP", hpp_list);
     if (project_name == NULL || file_list == NULL || hpp_list == NULL)
         return (error_message("Error: Allocation failed!\n"));
-    if ((libs = getlib(file_list, hpp_list, debug_mode)) == NULL ||
+    if ((libs = getlib(file_list, hpp_list, config)) == NULL ||
         (hpp_list = dir_filter(hpp_list)) == NULL ||
         (hpp_list = remove_doublon(hpp_list)) == NULL ||
         (libs = remove_doublon(libs)) == NULL || (hpp_list = add_lib_var(libs, hpp_list)) == NULL) {
@@ -349,7 +353,7 @@ int makefile_builder(int fd, int an, char **ext, int debug_mode)
         free_array(libs);
         return (error_message("Error: Allocation failed!\n"));
     }
-    print_makefile(project_name, fd, an, file_list, hpp_list, libs, type);
+    print_makefile(project_name, fd, an, file_list, hpp_list, libs, type, config);
     printf(RED"⚠️ " YEL" ALL"RED" libs are not generate by the AutoMakefile generator!\n"NC);
     free(project_name);
     free_array(hpp_list);

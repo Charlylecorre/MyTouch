@@ -18,21 +18,19 @@ char *find_lib(char *line)
     char *sfml_ref = "-lsfml-window -lsfml-graphics -lsfml-system";
 
     for (int i = 0; csfml[i]; i++) {
-        if (strstr(line, "#include") != NULL && strstr(line, csfml[i]) != NULL) {
+        if (super_strstr(2, line, "#include", csfml[i]) == 1) {
             lib = strdup(csfml_ref);
             return (lib);
         }
     }
-
     for (int i = 0; sfml[i]; i++) {
-        if (strstr(line, "#include") != NULL && strstr(line, sfml[i]) != NULL) {
+        if (super_strstr(2, line, "#include", sfml[i]) == 1) {
             lib = strdup(sfml_ref);
             return (lib);
         }
     }
-
     for (int i = 0; simple[i]; i++) {
-        if (strstr(line, "#include") != NULL && strstr(line, simple[i]) != NULL) {
+        if (super_strstr(2, line, "#include", simple[i]) == 1) {
             lib = strdup(simple_ref[i]);
             return (lib);
         }
@@ -40,7 +38,7 @@ char *find_lib(char *line)
     return (lib);
 }
 
-char **get_file_lib(char *path, int debug_mode)
+char **get_file_lib(char *path, config_t *config)
 {
     char **libs = NULL;
     char *buff = NULL;
@@ -63,7 +61,7 @@ char **get_file_lib(char *path, int debug_mode)
     for (int i = 0; array[i]; i++) {
         line_lib = find_lib(array[i]);
         if (line_lib != NULL) {
-            if (debug_mode == 1) {
+            if (config->debug_mode == true) {
                 printf(YEL"Find [" CYN"%s" YEL"] in [" CYN"%s" YEL"]\n"NC, line_lib, path);
                 printf(YEL"➜ %s\n"NC, array[i]);
             }
@@ -76,7 +74,7 @@ char **get_file_lib(char *path, int debug_mode)
     return (libs);
 }
 
-char **getlib(char **src, char **include, int debug_mode)
+char **getlib(char **src, char **include, config_t *config)
 {
     char **libs = NULL;
     char **tmp_list = NULL;
@@ -86,7 +84,7 @@ char **getlib(char **src, char **include, int debug_mode)
     libs[0] = NULL;
 
     for (int i = 0; src[i]; i++) {
-        tmp_list = get_file_lib(src[i], debug_mode);
+        tmp_list = get_file_lib(src[i], config);
         if (tmp_list[0] != NULL && (libs = concat_array(libs, tmp_list)) == NULL)
             return (NULL);
         free_array(tmp_list);
@@ -95,7 +93,7 @@ char **getlib(char **src, char **include, int debug_mode)
     }
 
     for (int i = 0; include[i]; i++) {
-        tmp_list = get_file_lib(include[i], debug_mode);
+        tmp_list = get_file_lib(include[i], config);
         if ((libs = concat_array(libs, tmp_list)) == NULL)
             return (NULL);
         free_array(tmp_list);

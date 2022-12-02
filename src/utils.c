@@ -7,6 +7,66 @@
 
 #include "my_touch.h"
 
+int strstart(char *str, char *start)
+{
+    return (strncmp(str, start, strlen(start)));
+}
+
+int super_strstr(int nb, char *str, ...)
+{
+    va_list multi_str;
+    va_start(multi_str, str);
+    char *local;
+    int value = 0;
+
+    for (int i = 0; i < nb; i++) {
+        local = (char *) va_arg(multi_str, char *);
+        if (strstr(str, local) != NULL) {
+            value++;
+        }
+    }
+    va_end(multi_str);
+    if (value == nb)
+        return (1);
+    return (0);
+}
+
+int super_cmp(int nb, char *str, ...)
+{
+    va_list multi_str;
+    va_start(multi_str, str);
+    char *local;
+    int value = 0;
+
+    for (int i = 0; i < nb; i++) {
+        local = (char *) va_arg(multi_str, char *);
+        if (strcmp(str, local) == 0) {
+            value++;
+        }
+    }
+    va_end(multi_str);
+    if (value == nb)
+        return (1);
+    return (0);
+}
+
+int multi_strstr(int nb, char *str, ...)
+{
+    va_list multi_str;
+    va_start(multi_str, str);
+    char *local;
+
+    for (int i = 0; i < nb; i++) {
+        local = (char *) va_arg(multi_str, char *);
+        if (strstr(str, local) != NULL) {
+            va_end(multi_str);
+            return (1);
+        }
+    }
+    va_end(multi_str);
+    return (0);
+}
+
 int multi_cmp(int nb, char *str, ...)
 {
     va_list multi_str;
@@ -161,15 +221,6 @@ void display_list(char *msg, char **av)
         printf(YEL"av[%i]:" CYN" %s\n" NC, i, av[i]);
     if (av && av[i] == NULL)
         printf(YEL"av[%i]:" RED" NULL\n" NC, i);
-}
-
-int search_av(char **av, char *str)
-{
-    for (int i = 0; av[i] != NULL; i++) {
-        if (strcmp(av[i], str) == 0)
-            return (1);
-    }
-    return (0);
 }
 
 int replace_mod(char **av)

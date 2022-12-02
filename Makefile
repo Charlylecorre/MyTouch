@@ -12,6 +12,7 @@ SRC =	src/create_file.c	\
      	src/utils.c	\
      	src/build.c	\
      	src/file_engine.c	\
+     	src/config.c	\
      	src/parser.c	\
      	src/formater.c	\
      	src/my_touch.c	\
