@@ -18,6 +18,7 @@ int do_hpp(char *project, char **arg, int fd, char *path)
         return (error_message("Error: Allocation failed\n"));
     dprintf(fd, "\n#ifndef %s\n", define);
     dprintf(fd, "    #define %s\n\n", define);
+    dprintf(fd, "    //#include <iostream>\n\n");
     if (arg_conatain(arg, "cpp") != -1) {
         dprintf(fd, "class %s {\n", format);
         dprintf(fd, "public:\n");
