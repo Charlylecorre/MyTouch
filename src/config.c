@@ -20,9 +20,11 @@ char *get_config_name(char *av)
 
 int free_config(config_t *config)
 {
-    if (config->project_name != NULL)
+    if (config->project_name != NULL) {
         free(config->project_name);
-    config->project_name = NULL;
+        config->project_name = NULL;
+    }
+    free(config);
     return (0);
 }
 
@@ -32,7 +34,7 @@ config_t *init_config(char **av)
     config->project_name = NULL;
     config->debug_mode = false;
 
-    for (int i = 0; av[i] != NULL && config->project_name == NULL; i++) {
+    for (int i = 0; av[i] != NULL; i++) {
         if (strstr(av[i], "-name:") != NULL) {
             config->project_name = get_config_name(av[i]);
             if (config->project_name == NULL)

@@ -238,7 +238,6 @@ int print_makefile(char *name, int fd, int an, char **src, char **hpp, char **li
     struct stat lib_dir;
     int lib = 0;
 
-    display_automakefile(config);
     if (stat("lib/", &lib_dir) != -1 && S_ISDIR(lib_dir.st_mode))
         lib = 1;
     if (str_type == NULL)
@@ -313,7 +312,7 @@ int print_makefile(char *name, int fd, int an, char **src, char **hpp, char **li
 
     dprintf(fd, "re:\tfclean all\n\n");
     dprintf(fd, "valgrind :\tfclean\n");
-    dprintf(fd, "\tgcc -o $(NAME) $(SRC) $(CFLAGS) -g\n\n");
+    dprintf(fd, "\tgcc -o $(NAME) $(SRC) $(CFLAGS) $(LIBS) -g\n\n");
     dprintf(fd, "reload :\n");
     dprintf(fd, "\tmy_touch Makefile");
     if (type == CPP)
@@ -327,6 +326,7 @@ int print_makefile(char *name, int fd, int an, char **src, char **hpp, char **li
 
 int makefile_builder(int fd, int an, char **ext, config_t *config)
 {
+    display_automakefile(config);
     int type = find_makefile_type(ext);
     char *project_name = find_makefile_project_name();
     char **file_list = recup_file_in_dir(".", type);
@@ -354,7 +354,7 @@ int makefile_builder(int fd, int an, char **ext, config_t *config)
         return (error_message("Error: Allocation failed!\n"));
     }
     print_makefile(project_name, fd, an, file_list, hpp_list, libs, type, config);
-    printf(RED"⚠️ " YEL" ALL"RED" libs are not generate by the AutoMakefile generator!\n"NC);
+    printf(YEL"⚠️ ️ Only supported libraries are generated!\n"NC);
     free(project_name);
     free_array(hpp_list);
     free_array(file_list);

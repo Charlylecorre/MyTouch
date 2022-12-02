@@ -39,7 +39,7 @@ int do_cpp(char **arg, int fd)
     if (arg_conatain(arg, "hpp") == -1)
         return (0);
     if ((hpp = build_hpp_link(arg)) == NULL)
-        return (error_message("Error: Allocation failed\n"));
+        return (error_message(RED"Error: Allocation failed\n"NC));
     dprintf(fd, "\n");
     dprintf(fd, "#include \"%s\"\n", hpp);
     free(hpp);
@@ -105,6 +105,10 @@ int main(int ac, char **av)
     config_t *config = init_config(av);
     int replace = replace_mod(av);
 
+    if (config == NULL)
+        return (error_message(RED"Error: Allocation failed\n"NC));
+    if (config->debug_mode == true)
+        printf(CYN"debug : ✅\n"NC);
     if (ac == 1)
         return (display_help());
     for (int i = 1; av[i] != NULL; i++)

@@ -44,7 +44,7 @@ fclean: clean
 re:	fclean all
 
 valgrind :	fclean
-	gcc -o $(NAME) $(SRC) $(CFLAGS) -g
+	gcc -o $(NAME) $(SRC) $(CFLAGS) $(LIBS) -g
 
 reload :
 	my_touch Makefile -r
