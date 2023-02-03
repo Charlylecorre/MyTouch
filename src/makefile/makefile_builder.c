@@ -292,7 +292,7 @@ int print_makefile(char *name, int fd, int an, char **src, char **hpp, char **li
         if (lib == 1)
             dprintf(fd, "\tmake -C lib/my\n");
         dprintf(fd, "\tgcc -o $(NAME) $(OBJ) $(CFLAGS) $(LIBS)\n");
-        dprintf(fd, "\techo \"%sBuild complete !%s\"\n", GRN, NC);
+        dprintf(fd, "\t@echo \"%sBuild complete !%s\"\n", GRN, NC);
     }
     if (type == CPP)
         dprintf(fd, "\tg++ -o $(NAME) $(OBJ) $(CXXFLAGS) $(LIBS)\n\n");

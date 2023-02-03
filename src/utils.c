@@ -260,7 +260,9 @@ int arg_conatain(char **arg, char *src)
 
 int display_help(void)
 {
-    printf("Help: use ./my_touch [file] ...\n");
+    printf("Help: use ./my_touch [file] ...\n\n");
+    printf("To generate a AutoMakefile : just touch Makefile and add '.cpp' extension for cpp project\n");
+    printf("Use '-name:[project name]' option to rename Makefile project\n");
     return (84);
 }
 

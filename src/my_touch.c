@@ -110,7 +110,7 @@ int main(int ac, char **av)
         return (error_message(RED"Error: Allocation failed\n"NC));
     if (config->debug_mode == true)
         printf(CYN"debug : ✅\n"NC);
-    if (ac == 1)
+    if (ac == 1 || (ac == 2 && (strcmp(av[1], "--help") == 0 || strcmp(av[1], "-h") == 0)))
         return (display_help());
     for (int i = 1; av[i] != NULL; i++)
         if (multi_cmp(2, av[i], "-r", "-debug") != 1 && strstart(av[i], "-name:") != 0 && file_engine(av[i], replace, config) != 0) {
